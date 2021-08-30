@@ -67,7 +67,7 @@ const resolvers = {
       if (context.user) {
         return Profile.findOneAndUpdate(
           { _id: context.user._id },
-          { $pull: { savedBooks: { bookId: bookId } } },
+          { $pull: { books: { bookId: bookId } } },
           { new: true }
         );
       }
