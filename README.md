@@ -52,6 +52,6 @@ Github: (https://github.com/pcon27)
 
 ## Code
 
-![resolvers](https://github.com/Pcon27/BudgetTracker/blob/a2c7911310402fb1564675be9fa9c994b950b84a/manifest.png)
+![resolvers](https://github.com/Pcon27/bookSearch/blob/693309b83ee10646401239b72f6369cb3264f424/images/resolvers.png)
 
-![searchBooks](https://github.com/Pcon27/BudgetTracker/blob/a2c7911310402fb1564675be9fa9c994b950b84a/node%20modules.png)
+![searchBooks](https://github.com/Pcon27/bookSearch/blob/693309b83ee10646401239b72f6369cb3264f424/images/searchBooks.png)
