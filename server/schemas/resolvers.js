@@ -49,7 +49,7 @@ const resolvers = {
       // If context has a `user` property, that means the user executing this mutation has a valid JWT and is logged in
       if (context.user) {
         console.log(args);
-        return User.findOneAndUpdate(
+        return await User.findOneAndUpdate(
           { _id: context.user._id },
           {
             $addToSet: {
@@ -68,11 +68,14 @@ const resolvers = {
     // Make it so a logged in user can only remove a skill from their own profile
     removeBook: async (parent, { bookId }, context) => {
       if (context.user) {
-        return User.findOneAndUpdate(
+        console.log(bookId)
+        let returnVal = await User.findOneAndUpdate(
           { _id: context.user._id },
-          { $pull: { books: { bookId: bookId } } },
+          { $pull: { savedBooks: { bookId: bookId } } },
           { new: true }
         );
+        console.log(returnVal)
+        return(returnVal)
       }
       throw new AuthenticationError('You need to be logged in!');
     },
