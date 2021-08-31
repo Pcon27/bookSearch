@@ -1,16 +1,16 @@
 const { AuthenticationError } = require('apollo-server-express');
-const { Profile, User } = require('../models');
+const { User } = require('../models');
 const { signToken } = require('../utils/auth');
 
 const resolvers = {
   Query: {
-    profiles: async () => {
-      return User.find();
-    },
+    // profiles: async () => {
+    //   return User.find();
+    // },
 
-    profile: async (parent, { profileId }) => {
-      return User.findOne({ _id: profileId });
-    },
+    // getSingleUser: async (parent, { getSingleUser }) => {
+    //   return User.findOne({ _id: profileId });
+    // },
     // By adding context to our query, we can retrieve the logged in user without specifically searching for them
     me: async (parent, args, context) => {
       if (context.user) {
@@ -22,36 +22,39 @@ const resolvers = {
 
   Mutation: {
     createUser: async (parent, { username, email, password }) => {
-      const profile = await User.create({ username, email, password });
-      const token = signToken(profile);
+      const user = await User.create({ username, email, password });
+      const token = signToken(user);
 
-      return { token, profile };
+      return { token, user };
     },
     login: async (parent, { email, password }) => {
-      const profile = await Profile.findOne({ email });
+      const user = await User.findOne({ email });
 
-      if (!profile) {
+      if (!User) {
         throw new AuthenticationError('No profile with this email found!');
       }
 
-      const correctPw = await profile.isCorrectPassword(password);
+      const correctPw = await user.isCorrectPassword(password);
 
       if (!correctPw) {
         throw new AuthenticationError('Incorrect password!');
       }
 
-      const token = signToken(profile);
-      return { token, profile };
+      const token = signToken(user);
+      return { token, user };
     },
 
     // Add a third argument to the resolver to access data in our `context`
-    saveBook: async (parent, { book }, context) => {
+    saveBook: async (parent, args, context) => {
       // If context has a `user` property, that means the user executing this mutation has a valid JWT and is logged in
       if (context.user) {
-        return Profile.findOneAndUpdate(
+        console.log(args);
+        return User.findOneAndUpdate(
           { _id: context.user._id },
           {
-            $addToSet: { books: book },
+            $addToSet: {
+              savedBooks: args
+            },
           },
           {
             new: true,
@@ -63,9 +66,9 @@ const resolvers = {
       throw new AuthenticationError('You need to be logged in!');
     },
     // Make it so a logged in user can only remove a skill from their own profile
-    removeBook: async (parent, { bookID }, context) => {
+    removeBook: async (parent, { bookId }, context) => {
       if (context.user) {
-        return Profile.findOneAndUpdate(
+        return User.findOneAndUpdate(
           { _id: context.user._id },
           { $pull: { books: { bookId: bookId } } },
           { new: true }
